@@ -1,0 +1,5 @@
+{
+  "name": "IDGEN",
+  "description": "IDGEN is a web application that allows users to fill in their details on a form and see a professional ID card generated in real-time. It includes fields for name, title, ID number, and photo upload.",
+  "requestFramePermissions": []
+}
