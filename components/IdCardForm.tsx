@@ -30,6 +30,14 @@ const gradientThemes = {
   'cosmic-fusion': 'from-purple-800 via-blue-700 to-pink-600',
 };
 
+const customColorPresets = [
+  { name: '🔥 Sunset Fire (Crimson & Yellow)', color1: '#ff4e50', color2: '#f9d423' },
+  { name: '🌐 Midnight Neon (Cyan & Blue)', color1: '#00f2fe', color2: '#4facfe' },
+  { name: '🌿 Emerald Aurora (Teal & Lime)', color1: '#11998e', color2: '#38ef7d' },
+  { name: '🔮 Royal Amethyst (Purple & Red)', color1: '#833ab4', color2: '#fd1d1d' },
+  { name: '🌑 Cosmic Slate (Charcoal & Jet Black)', color1: '#434343', color2: '#000000' }
+];
+
 const allSuggestions = [
   'Date of Birth',
   'Blood Group',
@@ -396,6 +404,60 @@ const IdCardForm: React.FC<IdCardFormProps> = ({
 
           {formData.backgroundType === 'gradient' && (
             <>
+              {/* Predefined Palette Theme Picker Dropdown */}
+              <div className="mb-4">
+                <label htmlFor="themeColorPreset" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5 flex items-center justify-between">
+                  <span>Gradient Theme Palette Picker</span>
+                  <span className="text-[10px] uppercase font-bold text-blue-500 bg-blue-50 dark:bg-blue-900/40 px-1.5 py-0.5 rounded">Presets</span>
+                </label>
+                <select
+                  id="themeColorPreset"
+                  name="themeColorPreset"
+                  value={
+                    formData.theme === 'custom'
+                      ? (() => {
+                          const idx = customColorPresets.findIndex(
+                            p => p.color1.toLowerCase() === formData.themeColor1.toLowerCase() &&
+                                 p.color2.toLowerCase() === formData.themeColor2.toLowerCase()
+                          );
+                          return idx !== -1 ? String(idx) : 'custom';
+                        })()
+                      : ''
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    if (val === 'custom') {
+                      setFormData(prev => ({ ...prev, theme: 'custom' }));
+                    } else if (val !== '') {
+                      const idx = parseInt(val, 10);
+                      const p = customColorPresets[idx];
+                      if (p) {
+                        setFormData(prev => ({
+                          ...prev,
+                          theme: 'custom',
+                          themeColor1: p.color1,
+                          themeColor2: p.color2,
+                        }));
+                      }
+                    }
+                  }}
+                  className="w-full px-3 py-2 bg-gray-50 dark:bg-gray-750 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition text-sm text-gray-700 dark:text-gray-100"
+                >
+                  <option value="" disabled>-- Choose a Theme Palette Preset --</option>
+                  {customColorPresets.map((preset, idx) => (
+                    <option key={idx} value={String(idx)}>
+                      {preset.name}
+                    </option>
+                  ))}
+                  {formData.theme === 'custom' && (
+                    <option value="custom">🎨 Custom Mix (Manual Selection)</option>
+                  )}
+                </select>
+                <p className="text-[11px] text-gray-400 mt-1">
+                  Selecting a preset automatically sets Custom Gradient and replaces color parameters.
+                </p>
+              </div>
+
               <GradientPicker selected={formData.theme} onChange={handleThemeChange} />
               {formData.theme === 'custom' && (
                 <div className="mt-4 p-4 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-700/50">
